@@ -1,32 +1,38 @@
 # ============================
-# 1. RDKit base image (GHCR, reliable on Render)
+# 1. Use official Miniconda base image
 # ============================
-FROM ghcr.io/mcs07/rdkit:latest
+FROM continuumio/miniconda3
 
 # ============================
-# 2. Set app directory
+# 2. Set working directory
 # ============================
 WORKDIR /app
 
 # ============================
-# 3. Install dependencies
+# 3. Create a Conda environment with RDKit
+# ============================
+RUN conda install -y -c conda-forge rdkit
+
+# ============================
+# 4. Copy requirements separately (cache-friendly)
 # ============================
 COPY requirements.txt .
 
+# Install pip dependencies inside the same environment
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
 # ============================
-# 4. Copy the entire backend
+# 5. Copy the entire project
 # ============================
 COPY . .
 
 # ============================
-# 5. Expose port for FastAPI
+# 6. Expose API port
 # ============================
 EXPOSE 10000
 
 # ============================
-# 6. Run FastAPI server
+# 7. Run FastAPI with Uvicorn
 # ============================
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "10000"]
