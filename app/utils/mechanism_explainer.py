@@ -1,9 +1,6 @@
 # mechanism_explainer.py
 
-import os
-from groq import Groq
-
-client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+from app.config import groq_client as client
 
 
 def generate_teacher_style_explanation(initial, product, steps):
